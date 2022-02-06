@@ -2,6 +2,7 @@ import random
 
 from django.contrib.auth.base_user import BaseUserManager
 
+
 def get_pin_code():
     pin_code = random.randint(1000, 9999)
     # while Room.objects.filter(pin_code=pin_code):
