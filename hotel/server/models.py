@@ -6,19 +6,11 @@ from django.db import models
 import qrcode
 from django.http import HttpResponse
 from django.utils import timezone
-# Create your models here.
 
 
 from django.db import models
 
 from .managers import CustomUserManager
-
-
-def get_pin_code():
-    pin_code = random.randint(1000, 9999)
-    # while Room.objects.filter(pin_code=pin_code):
-    #     pin_code = random.randint(100000, 999999)
-    return pin_code
 
 
 class Menu(models.Model):
@@ -50,14 +42,14 @@ class OrderDetail(models.Model):
 
 
 class Room(AbstractBaseUser, PermissionsMixin):
-    room_number = models.IntegerField('Номер комнаты', unique=True, blank=True)
-    pin_code = models.CharField('Пин-код', max_length=4, blank=True)
+    room_number = models.CharField('Номер комнаты', unique=True, blank=True, max_length=5)
     qrcode = models.ImageField(upload_to='qr_codes/', blank=True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
+    unhashed_password = models.CharField(max_length=5)
 
     USERNAME_FIELD = 'room_number'
     REQUIRED_FIELDS = []
@@ -77,9 +69,7 @@ class Room(AbstractBaseUser, PermissionsMixin):
             border=5)
         qr.add_data(input_data)
         qr.make(fit=True)
-        print(self.__dict__)
         self.qrcode = qr.make_image(fill='black', back_color='white')
         self.qrcode.save(f'media/qrcode{self.room_number}.png')
         self.qrcode = f'qrcode{self.room_number}.png'
-        # self.qrcode = f'media/qrcod?elf.id}.png'
         self.save_base(self.qrcode)

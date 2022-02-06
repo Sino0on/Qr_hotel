@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from .views import *
 from knox import views as knox_views
 
+
 urlpatterns = [
     path('room/<int:pk>', OrderCreateView.as_view()),
     path('room/', RoomListView.as_view()),
