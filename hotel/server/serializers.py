@@ -17,6 +17,23 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class FoodSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Menu
+        fields = '__all__'
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    new_order = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    is_done = serializers.HiddenField(default=False)
+    foods = FoodSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = '__all__'
+
+
 class OrderCreateSerializer(serializers.ModelSerializer):
     new_order = serializers.HiddenField(default=serializers.CurrentUserDefault())
     is_done = serializers.HiddenField(default=False)
@@ -32,6 +49,8 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         order.foods.add(*food_ids)
         return order
 
+    def to_representation(self, instance):
+        return OrderSerializer(instance).data
 
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:

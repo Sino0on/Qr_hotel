@@ -60,7 +60,7 @@ class Room(AbstractBaseUser, PermissionsMixin):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        input_data = f"http://127.0.0.1:8000/room/{self.room_number}"
+        input_data = f"http://127.0.0.1:8000/room/login"
 
         qr = qrcode.QRCode(
             version=1,
