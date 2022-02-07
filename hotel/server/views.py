@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from .serializers import *
 from .models import *
 from rest_framework import generics, status
-from .permissions import *
+# from .permissions import *
 
 from django.contrib.auth import get_user_model
 
@@ -19,6 +19,8 @@ from django.contrib.auth import login
 from rest_framework import permissions
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
+
+from string import digits
 
 
 class LoginAPI(KnoxLoginView):
@@ -37,8 +39,9 @@ class RoomUpdatePassword(APIView):
     def post(self, request):
         Room = get_user_model()
         room = Room.objects.get(room_number=int(request.data.get('room_number')))
-        new_password = str(get_pin_code()).zfill(4)
-        room.pin_code = new_password
+        new_password = Room.objects.make_random_password(4, digits)
+        # room.pin_code = new_password
+        room.unhashed_password = new_password
         room.set_password(new_password)
         room.save()
         return Response(new_password)
@@ -74,7 +77,7 @@ class MenuCreateView(generics.CreateAPIView):
 class OrderCreateView(generics.CreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderCreateSerializer
-    permission_classes = (IsAuthen, )
+    permission_classes = (IsAuthenticated, )
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
