@@ -60,7 +60,7 @@ class Room(AbstractBaseUser, PermissionsMixin):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        input_data = f"http://127.0.0.1:8000/room/login"
+        input_data = f"http://192.168.88.24:8000/api/v1/room/login?room={self.room_number}"
 
         qr = qrcode.QRCode(
             version=1,
@@ -69,6 +69,6 @@ class Room(AbstractBaseUser, PermissionsMixin):
         qr.add_data(input_data)
         qr.make(fit=True)
         self.qrcode = qr.make_image(fill='black', back_color='white')
-        self.qrcode.save(f'media/qrcode{self.room_number}.png')
+        self.qrcode.save(f'media/qr_codes/qrcode{self.room_number}.png')
         self.qrcode = f'qrcode{self.room_number}.png'
         self.save_base(self.qrcode)

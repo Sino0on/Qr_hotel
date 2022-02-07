@@ -13,6 +13,8 @@ urlpatterns = [
     path('room/create/', RoomCreateView.as_view()),
     path('room/update-password/', RoomUpdatePassword.as_view()),
     path('room/login/', LoginAPI.as_view()),
+    path('food_add/', MenuCreateView.as_view()),
+    path('food_update/<int:pk>', MenuUpdateView.as_view()),
     path('logout/', knox_views.LogoutView.as_view()),
     path('logoutall/', knox_views.LogoutAllView.as_view()),
     path('orders/', OrdersView.as_view())

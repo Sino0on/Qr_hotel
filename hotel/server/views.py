@@ -33,10 +33,10 @@ class LoginAPI(KnoxLoginView):
         user = serializer.validated_data['user']
         login(request, user)
         return redirect('menu')
-        return super(LoginAPI, self).post(request, format=None)
 
 
 class RoomUpdatePassword(APIView):
+    permission_classes = (IsAdminUser,)
 
     def post(self, request):
         Room = get_user_model()
@@ -74,12 +74,19 @@ class RoomListView(generics.ListAPIView):
 class MenuCreateView(generics.CreateAPIView):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
+    permission_classes = (IsAdminUser,)
+
+
+class MenuUpdateView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Menu.objects.all()
+    serializer_class = MenuSerializer
+    permission_classes = (IsAdminUser,)
 
 
 class OrderCreateView(generics.CreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderCreateSerializer
-    permission_classes = (IsAuthenticated, )
+    # permission_classes = (IsAuthenticated, )
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
