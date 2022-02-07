@@ -19,12 +19,18 @@ class OrderSerializer(serializers.ModelSerializer):
 
 class OrderCreateSerializer(serializers.ModelSerializer):
     new_order = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    is_done = serializers.HiddenField(default=False)
+
     class Meta:
         model = Order
         fields = '__all__'
 
     def create(self, validated_data):
-        return Order.objects.create(**validated_data)
+        foods = validated_data.pop('foods')
+        food_ids = [i for i in foods]
+        order = Order.objects.create(**validated_data)
+        order.foods.add(*food_ids)
+        return order
 
 
 class RoomSerializer(serializers.ModelSerializer):

@@ -13,6 +13,11 @@ from django.db import models
 from .managers import CustomUserManager
 
 
+class Category(models.Model):
+    title = models.CharField('Категория', max_length=30)
+    foods = models.ForeignKey('Menu', on_delete=models.CASCADE)
+
+
 class Menu(models.Model):
     title = models.CharField('Название блюда', max_length=200)
     content = models.TextField('Описание блюда')
@@ -20,7 +25,6 @@ class Menu(models.Model):
     image = models.ImageField(upload_to='dishes/')
     in_stock = models.BooleanField('В наличии', default=True)
     price = models.IntegerField('Цена', default=0)
-    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.title
@@ -28,17 +32,12 @@ class Menu(models.Model):
 
 class Order(models.Model):
     new_order = models.ForeignKey('Room', on_delete=models.DO_NOTHING)
-    amount = models.IntegerField('Количество', validators=[MaxValueValidator(20), MinValueValidator(1)], default=0)
     order_date = models.DateTimeField('Время заказа', auto_now_add=True)
-    is_done = models.BooleanField('', default=False)
+    is_done = models.BooleanField('Готово', default=False)
+    foods = models.ManyToManyField(Menu)
 
     def __str__(self):
         return f'Заказ комнаты номер {self.new_order}'
-
-
-class OrderDetail(models.Model):
-    dish = models.ForeignKey(Menu, on_delete=models.DO_NOTHING)
-    order = models.ForeignKey('Order', on_delete=models.DO_NOTHING)
 
 
 class Room(AbstractBaseUser, PermissionsMixin):
