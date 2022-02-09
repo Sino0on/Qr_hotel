@@ -1,4 +1,5 @@
 from django.shortcuts import redirect
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -32,11 +33,12 @@ class LoginAPI(KnoxLoginView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         login(request, user)
-        return redirect('menu')
+        # return redirect('menu')
         return super(LoginAPI, self).post(request, format=None)
 
 
 class RoomUpdatePassword(APIView):
+    permission_classes = (IsAdminUser,)
 
     def post(self, request):
         Room = get_user_model()
@@ -47,6 +49,11 @@ class RoomUpdatePassword(APIView):
         room.set_password(new_password)
         room.save()
         return Response(new_password)
+
+
+class FoodsView(generics.ListAPIView):
+    serializer_class = MenuSerializer
+    queryset = Menu.objects.all()
 
 
 class RoomCreateView(generics.CreateAPIView):
@@ -74,6 +81,25 @@ class RoomListView(generics.ListAPIView):
 class MenuCreateView(generics.CreateAPIView):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
+    permission_classes = (IsAdminUser,)
+
+
+class MenuUpdateView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Menu.objects.all()
+    serializer_class = MenuSerializer
+    permission_classes = (IsAdminUser,)
+
+
+class CategoryCreateView(generics.CreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategoryCreateSerializer
+    permission_classes = (IsAdminUser, )
+
+
+class MenuIsDoneUpdateView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Menu.objects.all()
+    serializer_class = MenuIsDoneSerializer
+    permission_classes = (IsAdminUser,)
 
 
 class OrderCreateView(generics.CreateAPIView):
@@ -81,6 +107,7 @@ class OrderCreateView(generics.CreateAPIView):
     serializer_class = OrderCreateSerializer
     permission_classes = (IsAuthenticated, )
 
+    @csrf_exempt
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
@@ -93,6 +120,5 @@ class OrderCreateView(generics.CreateAPIView):
 
 class OrdersView(generics.ListAPIView):
     queryset = Order.objects.all()
-    serializer_class = OrderSerializer
+    serializer_class = OrderListSerializer
     permission_classes = (IsAdminUser, )
-
