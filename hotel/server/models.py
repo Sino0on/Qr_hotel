@@ -15,7 +15,9 @@ from .managers import CustomUserManager
 
 class Category(models.Model):
     title = models.CharField('Категория', max_length=30)
-    foods = models.ForeignKey('Menu', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
 
 
 class Menu(models.Model):
@@ -25,6 +27,7 @@ class Menu(models.Model):
     image = models.ImageField(upload_to='dishes/')
     in_stock = models.BooleanField('В наличии', default=True)
     price = models.IntegerField('Цена', default=0)
+    category = models.ForeignKey('Category', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title

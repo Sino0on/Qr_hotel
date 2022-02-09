@@ -11,6 +11,18 @@ class MenuSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CategoryCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+
+
+class MenuIsDoneSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ['is_done']
+
+
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
@@ -28,6 +40,15 @@ class OrderSerializer(serializers.ModelSerializer):
     new_order = serializers.HiddenField(default=serializers.CurrentUserDefault())
     is_done = serializers.HiddenField(default=False)
     foods = FoodSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = '__all__'
+
+
+class OrderListSerializer(serializers.ModelSerializer):
+    foods = FoodSerializer(many=True)
+    # id = serializers.HiddenField(default=False)
 
     class Meta:
         model = Order
